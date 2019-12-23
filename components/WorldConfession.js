@@ -23,7 +23,7 @@ export default function ListConfessions() {
 	useEffect( () => {
 		if (!cfsSnapshot || !confessions) {
 			setConfessions([]);
-			window.setTimeout(fakeRandomConfession, 30000);
+			window.setTimeout(fakeRandomConfession, 2000);
 
 		} else if (cfsSnapshot && !confessions) {
 			setConfessions(cfsSnapshot);
