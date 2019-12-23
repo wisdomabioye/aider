@@ -1,0 +1,269 @@
+@charset "utf-8";
+// Set your brand colors
+$dark: #212c40;
+$link: #3f5895;
+$primary: #211f6d;
+$info: #1d0075;
+
+// $tabs-border-bottom-width: 0;
+
+$tabs-link-color: #fff;
+
+$tabs-link-hover-border-bottom-color: #abc;
+$tabs-link-hover-color: #abc;
+
+$tabs-link-active-border-bottom-color: #ddd;
+$tabs-link-active-color: #ddd;
+
+$footer-background-color: #211f6d;
+// Update Bulma's global variables
+$grey-dark: $dark;
+
+@import "../node_modules/bulma/bulma.sass";
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+	/*font-size: 14px;*/
+	font-style: normal;
+}
+
+p, h1, h2, h3, h4, h5, h6,
+span, small, strong {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: unset;
+	-moz-osx-font-smoothing: grayscale;
+	font-smoothing: antialiased;
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+
+.spinner {
+	-webkit-animation: spin 4s linear infinite;
+    -moz-animation: spin 4s linear infinite;
+    animation: spin 4s linear infinite;
+}
+
+.strong {
+	font-weight: bold;
+}
+
+.fullpage-height {
+	min-height: 100vh;
+}
+
+.halfpage-height {
+	min-height: 50vh;
+}
+
+.pointer:hover {
+	cursor: pointer;
+}
+
+.no-click {
+	pointer-events: none;
+}
+
+.button.disabled {
+	cursor: not-allowed;
+}
+
+.image-centered {
+	display: block;
+	margin: auto;
+}
+.thin-text {
+	font-weight: lighter;
+}
+
+.underlined:after {
+	/*position: absolute;*/
+	margin-top: 10px;
+	margin-bottom: 10px;
+	width: 46px;
+	left: 0;
+	height: 3px;
+	top: -24px;
+	content: "";
+	display: block;
+	border-radius: 2px;
+	background: #d4d4d9;
+	background: linear-gradient(141deg, #d4d4d9 0%, #026c9d 71%, #005fb9 100%);
+}
+
+.border-left {
+	border-left: 4px solid blue;
+	padding-left: 8px;
+	padding-right: 8px;
+	background-color: #eee;
+}
+
+footer ul {
+	margin-top: 25px;
+}
+footer ul li {
+	margin-bottom: 10px;
+}
+footer ul li > a {
+	font-size: 14px;
+}
+footer ul li > a:hover{
+	color: #fff;
+}
+
+/*padding classes*/
+/*padding top*/
+
+.p-0 {
+	padding: 0 !important;
+}
+
+.p-1 {
+	padding: .3em !important;
+}
+
+.pt-0{
+	padding-top: 0 !important;
+}
+.pt-1{
+	padding-top: .3em !important;
+}
+.pt-2{
+	padding-top: .62em !important;
+}
+.pt-3{
+	padding-top: .93em !important;
+}
+.pt-4{
+	padding-top: 1.25em !important;
+}
+/*padding bottom*/
+.pb-0{
+	padding-bottom: 0 !important;
+}
+.pb-1{
+	padding-bottom: .3em !important;
+}
+.pb-2{
+	padding-bottom: .62em !important;
+}
+.pb-3{
+	padding-bottom: .93em !important;
+}
+.pb-4{
+	padding-bottom: 1.25em !important;
+}
+
+/*padding right*/
+.pr-0{
+	padding-right: 0 !important;
+}
+.pr-1{
+	padding-right: .3em !important;
+}
+.pr-2{
+	padding-right: .62em !important;
+}
+.pr-3{
+	padding-right: .93em !important;
+}
+.pr-4{
+	padding-right: 1.25em !important;
+}
+
+/*padding left*/
+.pl-0{
+	padding-left: 0 !important;
+}
+.pl-1{
+	padding-left: .3em !important;
+}
+.pl-2{
+	padding-left: .62em !important;
+}
+.pl-3{
+	padding-left: .93em !important;
+}
+.pl-4{
+	padding-left: 1.25em !important;
+}
+
+/*margin classes*/
+/*margin top*/
+.mt-0{
+	margin-top: 0 !important;
+}
+.mt-1{
+	margin-top: .3em !important;
+}
+.mt-2{
+	margin-top: .62em !important;
+}
+.mt-3{
+	margin-top: .93em !important;
+}
+.mt-4{
+	margin-top: 1.25em !important;
+}
+/*margin bottom*/
+.mb-0{
+	margin-bottom: 0 !important;
+}
+.mb-1{
+	margin-bottom: .3em !important;
+}
+.mb-2{
+	margin-bottom: .62em !important;
+}
+.mb-3{
+	margin-bottom: .93em !important;
+}
+.mb-4{
+	margin-bottom: 1.25em !important;
+}
+
+/*margin right*/
+.mr-1{
+	margin-right: .3em !important;
+}
+.mr-2{
+	margin-right: .62em !important;
+}
+.mr-3{
+	margin-right: .93em !important;
+}
+.mr-4{
+	margin-right: 1.25em !important;
+}
+
+/*margin left*/
+.ml-1{
+	margin-left: .3em !important;
+}
+.ml-2{
+	margin-left: .62em !important;
+}
+.ml-3{
+	margin-left: .93em !important;
+}
+.ml-4{
+	margin-left: 1.25em !important;
+}
+/*border radius*/
+.br-1{
+	border-radius: .2em !important;
+}
+.br-2{
+	border-radius: .4em !important;
+}
+.br-3{
+	border-radius: .6em !important;
+}
+.br-4{
+	border-radius: .8em !important;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }

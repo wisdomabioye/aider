@@ -1,0 +1,10 @@
+{
+  "name": "Decentralized Confession",
+  "start_url": "/",
+  "description": "Decentralized Confession",
+  "icons": [{
+    "src": "https://confession.live/images/confession.png",
+    "sizes": "200x198",
+    "type": "image/png"
+  }]
+}
