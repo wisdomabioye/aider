@@ -4,6 +4,8 @@ import Main from "../layouts/Main";
 import IntroHero from "../components/IntroHero";
 import HappinessRules from "../components/HappinessRules";
 import SignInWidget from "../components/SignInWidget";
+import Verses from "../components/Verses";
+
 export default function Index() {
 	return (
 		<Main>
@@ -27,6 +29,10 @@ export default function Index() {
 							See greater sins and confess yours without fear
 						</p>
 						<SignInWidget />
+					</div>
+					<div style={{minHeight: "110px"}}>
+						<hr className="mt-0 mb-0" />
+						<Verses />
 					</div>
 				</div>
 			</div>

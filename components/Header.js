@@ -30,12 +30,6 @@ function Header() {
 							
 						</div>
 					}
-					{/*<Link href="/about">
-						<a className="navbar-item">
-							About
-						</a>
-					</Link>*/}
-					
 				</div>
 			</div>
 		</nav>

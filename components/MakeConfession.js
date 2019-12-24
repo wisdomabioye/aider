@@ -7,7 +7,9 @@ export default function MakeConfession() {
 
 	if (!signedIn()) {
 		return (
-			<SignInButton size="normal" />
+			<div>
+				<SignInButton size="normal" />
+			</div>
 		)
 	}
 

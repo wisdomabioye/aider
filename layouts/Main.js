@@ -10,12 +10,12 @@ import ('../styles/main.scss');
 export default Main;
 
 function Main(props) {
-	let {name} = appInfo;
+	let {description} = appInfo;
 	
 	return (
 		<div className="container is-fullhd">
 			<Head>
-				<title> { name }</title>
+				<title> { description }</title>
 			</Head>
 			<Header />
 				<div>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { appInfo } from "../app.config";
 
 export default function Intro() {
-	let {description, tagline} = appInfo;
+	let {description, tagline, otherDescription} = appInfo;
 	return (
 		<div className="hero is-primary has-text-centered">
 			<div className="hero-body">
@@ -12,7 +12,9 @@ export default function Intro() {
 				<h2 className="subtitle">	
 					{ tagline }
 				</h2>
-
+				<h3 className="mb-3">
+					{ otherDescription }
+				</h3>
 				<div className="buttons is-centered">
 					<Link href="/confessions">
 						<a className="button is-warning is-outlined">

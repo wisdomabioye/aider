@@ -2,7 +2,7 @@ exports.appInfo = {
 	name: "Confession",
 	description: "Decentralized Confession",
 	tagline: "Confession heals. Confess your sins so you may be forgiven and receive more blessings",
-
+	otherDescription: "A real use case of Blockchain on human life",
 	keywords: "",
 	author: "Wisdom Abioye",
 	currentYear: new Date().getFullYear(),

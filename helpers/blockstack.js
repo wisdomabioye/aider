@@ -9,7 +9,7 @@ export function signIn() {
 }
 
 export function signOut() {
-	userSession.signUserOut();
+	return userSession.signUserOut();
 }
 
 export function signedIn() {

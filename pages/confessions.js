@@ -57,7 +57,7 @@ export default function Confession() {
 					</div>
 				</div>
 				<div className="column is-12">
-					<div className="box" style={{height: "75vh"}}>
+					<div className="box" style={{height: "90vh"}}>
 						<div className="confession" style={{height: "90%", display: currentTab.toLowerCase() == "world" ? "block" : "none"}}>
 							<WorldConfession />
 							<MakeConfession />							
@@ -70,12 +70,6 @@ export default function Confession() {
 							</div>	
 						}
 						
-					</div>
-				</div>
-				<div className="column is-8">
-					<div style={{minHeight: "60px"}}>
-						<hr className="mt-0 mb-0" />
-						<Verses />
 					</div>
 				</div>
 			</div>
