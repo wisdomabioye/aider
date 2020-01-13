@@ -1,9 +1,9 @@
 {
-  "name": "Decentralized Confession",
+  "name": "Decentralized Personal Assistant",
   "start_url": "/",
-  "description": "Decentralized Confession",
+  "description": "Decentralized Personal Assistant",
   "icons": [{
-    "src": "https://confession.live/images/confession.png",
+    "src": "https://aider.app/images/aider.png",
     "sizes": "200x198",
     "type": "image/png"
   }]

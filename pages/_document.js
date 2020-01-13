@@ -17,11 +17,11 @@ export default class MyDocument extends Document {
           <meta name="keywords" content={ keywords } />
           <meta name="description" content={ description } />
           <meta name="author" content={ author } />
-          
           <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+          <link rel="stylesheet" type="text/css" href="/fonts/css/fontello.css" />
   
         </Head>
-        <body className="fullpage-height has-background-primary has-text-light container is-fluid">
+        <body>
           <Main />
           <NextScript />
         </body>

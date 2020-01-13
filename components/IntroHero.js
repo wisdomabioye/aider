@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { appInfo } from "../app.config";
+import SignInWidget from "../components/SignInWidget";
 
 export default function Intro() {
 	let {description, tagline, otherDescription} = appInfo;
 	return (
-		<div className="hero is-primary has-text-centered">
+		<div className="hero has-text-centered">
 			<div className="hero-body">
 				<h1 className="title pb-2">
 					{ description }
@@ -15,19 +16,7 @@ export default function Intro() {
 				<h3 className="mb-3">
 					{ otherDescription }
 				</h3>
-				<div className="buttons is-centered">
-					<Link href="/confessions">
-						<a className="button is-warning is-outlined">
-							Confess now!
-						</a>
-					</Link>
-					
-					<Link href="/about">
-						<a className="button is-link">
-							Learn more
-						</a>
-					</Link>
-				</div>
+				<SignInWidget />
 			</div>
 		</div>
 	)
