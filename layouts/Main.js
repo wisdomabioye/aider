@@ -34,7 +34,7 @@ export default function Main(props) {
 		setSignInStatus(signedIn());
 	}
 	return (
-		<div className="container is-fullhd">
+		<div className="container is-fullhd has-background-white">
 			<Head>
 	          <title> {props.title ? props.title + " | " : ""}{ appInfo.description }</title>
 			</Head>

@@ -20,7 +20,7 @@ export default function Header() {
 	}
 	
 	return (
-		<nav className="navbar">
+		<nav className="navbar is-light">
 			<div className="navbar-brand">
 				<Link href="/">
 					<a className="navbar-item">

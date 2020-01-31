@@ -8,8 +8,13 @@ export default function Index() {
 	return (
 		<Home>
 			<div className="columns is-vcentered">
-				<div className="column is-6">
+				<div className="column is-5">
 					<IntroHero />
+				</div>
+				<div className="column is-7 mt-4">
+					<div className="box has-background-dark">
+						<img src="/images/aider_finance.png" alt="Aider Finance" />
+					</div>
 				</div>
 			</div>
 			<div className="section" id="features">

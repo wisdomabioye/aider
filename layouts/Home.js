@@ -11,7 +11,7 @@ import ('../styles/main.scss');
 
 export default function Home(props) {
 	return (
-		<div className="container">
+		<div className="container has-background-light">
 			<Head>
 	          <title>{appInfo.name} | { appInfo.description }</title>
 			</Head>
