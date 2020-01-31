@@ -4,7 +4,9 @@ import Database from "./localstorage";
 
 export function useAuthStatus() {
 	let [status, setStatus] = useState(signedIn());
-
+	useEffect( () => {
+		setStatus(signedIn());
+	})
 	return status;
 }
 

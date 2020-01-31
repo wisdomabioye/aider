@@ -57,11 +57,20 @@ export default function FinanceChart(props) {
 	data["datasets"][0]["data"] = earnings;
 	data["datasets"][1]["data"] = spendings;
 
+  let totalEarning = sumArrayNumber(earnings),
+      totalSpending = sumArrayNumber(spendings),
+      wealth = totalEarning - totalSpending;
+
 	return (
 		<div className="mt-4 mr-4 mb-4 ml-4" style={{maxWidth: "99%"}}>
       <p className="is-size-7">
-        <strong>Total Earning:</strong> ${sumArrayNumber(earnings)} <br/>
-        <strong>Total Spending:</strong> ${sumArrayNumber(spendings)}
+        <strong>Total Earning:</strong> ${totalEarning} <br/>
+        <strong>Total Spending:</strong> ${totalSpending}<br/>
+        <strong>Wealth:</strong> &nbsp;
+        <span className={wealth >= 0 ? "has-text-success" : "has-text-danger"}>
+          ${wealth}
+        </span> 
+
       </p>
 			<Line 
 				data={data} 

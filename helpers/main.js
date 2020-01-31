@@ -8,14 +8,6 @@ export function toggleLoadingButton(btnElement) {
 	}
 }
 
-export function getMonthName(month, day, year) {
-
-}
-
-export function getWeekDay(month, day, year) {
-	
-}
-
 export function financeFilename(dateStr = new Date()) {
 	let date = new Date(Date.parse(dateStr));
 	let newDate;
@@ -26,12 +18,15 @@ export function financeFilename(dateStr = new Date()) {
 	}
 
 	return newDate;
-	/*122019 //December 2019
+	/*
+	122019 //December 2019
 	112019 //November 2019
 	52019 //May 2019
 	12019 //January 2019
 	72020 //July 2020
-	102020 //October 2020*/
+	102020 //October 2020
+	..and so on
+	*/
 }
 
 export function filenameToDate(filename) {
@@ -100,56 +95,89 @@ export function sumArrayNumber(numbers) {
 }
 
 export function getFileIcon(type) {
-	let icon = ""
+	let icon = "doc"
 
-	switch(true) {
-        case type.includes("image"):
-			icon = "picture";
-			break;
-        
-        case type.includes("video"):
-			icon = "video";
-			break;
+	if (type) {
+		switch(true) {
+	        case type.includes("image"):
+				icon = "picture";
+				break;
+	        
+	        case type.includes("video"):
+				icon = "video";
+				break;
 
-		case type.includes("audio"):
-			icon = "music";
-			break;
+			case type.includes("audio"):
+				icon = "music";
+				break;
 
-		case type.includes("contact"):
-			icon = "contacts";
-			break;
+			case type.includes("contact"):
+				icon = "contacts";
+				break;
 
-		case type.includes("sheet"):
-			icon = "file-excel";
-			break;
+			case type.includes("sheet"):
+				icon = "file-excel";
+				break;
 
-		case type.includes("word"):
-			icon = "file-word";
-			break;
-		
-		case type.includes("pdf"):
-			icon = "file-pdf";
-			break;
-		
-		case type.includes("powerpoint"):
-			icon = "file-powerpoint";
-			break;
+			case type.includes("word"):
+				icon = "file-word";
+				break;
+			
+			case type.includes("pdf"):
+				icon = "file-pdf";
+				break;
+			
+			case type.includes("powerpoint"):
+				icon = "file-powerpoint";
+				break;
 
-		case type.includes("plain"):
-			icon = "doc-text";
-			break;
+			case type.includes("plain"):
+				icon = "doc-text";
+				break;
 
-		case (type.includes("html") || type.includes("javascript") || type.includes("json")):
-			icon = "file-code";
-			break;
-		
-		case (type.includes("zip") || type.includes("rar")):
-			icon = "file-archive";
-			break;
+			case (type.includes("html") || type.includes("javascript") || type.includes("json")):
+				icon = "file-code";
+				break;
+			
+			case (type.includes("zip") || type.includes("rar")):
+				icon = "file-archive";
+				break;
 
-		default:
-			icon = "doc";
-			break;
+			default:
+				icon = "doc";
+				break;
+		}	
 	}
+	
 	return ("icon-" + icon);
+}
+
+export function toArray(fileList) {
+    return Array.prototype.slice.call(fileList);
+}
+
+export function dayMonthTime(date) {
+	date = new Date(Date.parse(date));
+	
+	let year = date.getFullYear(),
+		month = date.getMonth(),
+		day = date.getDate(),
+		minute = date.getMinutes(),
+		hour = date.getHours();
+
+	return `${day}/${month}/${year}, ${hour}:${minute}`;
+}
+
+export function downloader(data, type, name) {
+	let blob = new Blob([data], {type});
+	let url = window.URL.createObjectURL(blob);
+	downloadURI(url, name);
+	window.URL.revokeObjectURL(url);
+}
+
+export function downloadURI(uri, name) {
+    let link = document.createElement("a");
+    link.download = name;
+    link.href = uri;
+    link.click();
 }

@@ -6,7 +6,7 @@ import { Input, Button, Select } from "../../components/FormElements";
 import Loading from "../../components/LoadingIcon";
 import FinanceChart from "../../components/LineChart";
 import { MonthPicker } from "../../components/DatePicker";
-import Database from "../../helpers/localstorage";
+import {getDataJSON, setDataJSON} from "../../helpers/blockstack";
 import { financeFilename, daysInMonth, numberToArray, sumAmount } from "../../helpers/main";
 
 
@@ -16,13 +16,12 @@ export default function Finance() {
 	let [data, setData] = useState(null);
 
 	useEffect( () => {
-		fetchData();
+		fetchData();	
 	}, [targetMonth])
 
 	async function fetchData() {
-		let storage = new Database(targetMonth)
 		try {
-			let finances = await storage.get();
+			let finances = await getDataJSON(targetMonth);
 			setData(finances);
 		} catch (error) {
 			console.log(error);
@@ -30,9 +29,8 @@ export default function Finance() {
 	}
 
 	async function updateData(doc) {
-		let storage = new Database(targetMonth)
 		try {
-			await storage.setOrMerge(doc);
+			await setOrMergeThisMonthFinanceData(doc);
 			fetchData();
 		} catch (error) {
 			console.log(error);
@@ -60,15 +58,15 @@ export default function Finance() {
 	}
 
 	return (
-		<Main>
+		<Main title="Financial Record">
 			<MonthPicker changeHandler={changeDate} />
 			<FinanceChart data={data} />
 			<div>
 				<div className="buttons are-small">
 					
-					<button className="button is-dark" data-type="Earn" onClick={handleButton}> Add Earn </button>
+					<button className="button is-dark" data-type="Earn" onClick={handleButton}> Add Earning </button>
 					
-					<button className="button is-dark" data-type="Spend" onClick={handleButton}> Add Spend </button>
+					<button className="button is-dark" data-type="Spend" onClick={handleButton}> Add Spending </button>
 				</div>
 				<AddFinanceForm {...formConfig} />	
 				
@@ -141,6 +139,7 @@ function AddFinanceForm(props) {
 				<Button 
 					className={`button is-small is-dark ${isSubmitting && "is-loading"}`}
 					text="Submit"
+					type="submit"
 				/>
 			</div>
 			<div className="column is-12 pt-0 pb-0">
@@ -155,8 +154,15 @@ function FinancesList(props) {
 	let [day, setDay] = useState(new Date().getDate());
 	let my = props.monthstr; // 12020 | 112019
 
-	let year = Number(my.substring(my.length, my.length-4)); // 2020 | 2019
-	let month = Number(my.substring(0, my.length-4)); // 1 | 2 | 12 || 10
+	let year, month;
+	if (my) {
+		year = Number(my.substring(my.length, my.length-4)); // 2020 | 2019
+		month = Number(my.substring(0, my.length-4)); // 1 | 2 | 12 || 10
+	} else {
+		let newDate = new Date();
+		year = newDate.getFullYear(); // 2020 | 2019
+		month = newDate.getMonth() + 1; // 1 | 2 | 12 || 10
+	}
 
 	var selectOptions = numberToArray(daysInMonth(month, year)).map(i => ({value: i+1}));
 
@@ -199,7 +205,6 @@ function FinancesList(props) {
 				<FinanceTable 
 					data={dayFinances ? dayFinances["spendings"] : []}
 					text="spending"
-
 				/>
 			</div>
 		</div>
@@ -248,4 +253,70 @@ function FinanceTable(props) {
 			</tbody>
 		</table>
 	)
+}
+
+
+async function setOrMergeThisMonthFinanceData(data) {
+	//build the filename
+	let date = new Date();
+    let today = date.getDate();
+    let thisMonth = financeFilename(date) // filename
+    
+    let targetType;
+
+    //grab finance type
+    if (data["type"] == "Spend") {
+        targetType = "spendings"
+    } else if (data["type"] == "Earn") {
+        targetType = "earnings"
+    }
+    //build the new finance
+    const newFinance = {amount: data["amount"], comment: data["comment"]};
+
+    //each day finance schema
+    const dailyFinanceSchema = {
+        day: today,
+        earnings: [],
+        spendings: []
+    }
+
+
+    return await getDataJSON(thisMonth)
+    .then( oldData => {
+        if (!oldData) {
+            // build the new month finance file
+            dailyFinanceSchema[targetType].push(newFinance);
+            return setDataJSON(thisMonth, [dailyFinanceSchema]);
+        } else {
+            // there is oldData
+            // lets update it
+            
+            let index /*index of todayDoc*/;
+            
+            let todayDoc = oldData.find((doc, i) => {
+                    if (doc.day == today) {
+                        index = i;
+                        return true;
+                    }
+                });
+
+            if (todayDoc) {
+                // modify today doc and update
+                todayDoc[targetType].push(newFinance);
+                oldData[index] = todayDoc;
+                
+                return setDataJSON(thisMonth, oldData);
+            } else {
+                //no today doc
+                //build today doc
+                dailyFinanceSchema[targetType].push(newFinance);
+                oldData.push(dailyFinanceSchema);
+                return setDataJSON(thisMonth, oldData);
+            }
+
+        }
+    })
+    .catch(error => {
+        console.log("error", error);
+    })
 }

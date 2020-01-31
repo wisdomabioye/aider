@@ -11,9 +11,9 @@ import ('../styles/main.scss');
 
 export default function Home(props) {
 	return (
-		<div className="container is-fullhd">
+		<div className="container">
 			<Head>
-	          <title> { appInfo.tagline }</title>
+	          <title>{appInfo.name} | { appInfo.description }</title>
 			</Head>
 			<Header />
 			<div>

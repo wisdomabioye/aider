@@ -4,7 +4,7 @@
   "description": "Decentralized Personal Assistant",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 4000",
     "build": "next build",
     "start": "next start",
     "export": "npm run build && next export -o dist"

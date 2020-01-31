@@ -10,6 +10,7 @@ export function Input(props) {
 		return (
 			<div className="field">
 				<div className={`control ${props.icon ? "has-icons-left": ""}`}>
+					<label className="label">{props.label || ""}</label>
 					<input 
 						className={"input " + (props.className || "") } 
 						type={props.type || "text"} 
@@ -61,6 +62,7 @@ export function InputExpanded(props) {
 							onBlur={props.onBlur || null}
 							onFocus={props.onFocus || null}
 							onChange={props.onChange || null}
+							onClick={props.onClick || null}
 							list={props.list || null} 
 							id={props.id || null} 
 							value={props.value}
@@ -150,6 +152,7 @@ export function Button(props) {
 			title={props.title}
 			disabled={props.disabled || null}
 			onClick={props.onClick || null}
+			title={props.title}
 		>
 			{props.text}
 		</button>

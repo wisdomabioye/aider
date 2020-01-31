@@ -7,7 +7,7 @@ import Logo from "./Logo";
 export default function Sidebar(props) {
 	
 	return (
-		<>
+		<div>
 			<Logo />
 			<h2 className="has-text-centered is-size-5 mt-1 mb-4 has-text-light">Aider App</h2>
 			<aside className="menu pl-2">
@@ -19,14 +19,14 @@ export default function Sidebar(props) {
 			  	}
 			  </ul>
 			</aside>
-		</>
+		</div>
 	)
 }
 
 
 function ListItem(props) {
 	return (
-		<li className="sub-menu">
+		<li className="sub-menu mt-1 mb-1">
 			<Anchor name={props.name} link={props.link} />
 			{
 				props.subMenu &&

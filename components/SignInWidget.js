@@ -5,7 +5,6 @@ import { useAuthStatus } from "../helpers/hooks";
 
 export default function SignInWidget() {
 	let status = useAuthStatus();
-	
 	return (
 		<div className="buttons is-centered">
 			{

@@ -24,7 +24,7 @@ export default function Header() {
 			<div className="navbar-brand">
 				<Link href="/">
 					<a className="navbar-item">
-						<span className="is-size-5"> { name } </span>
+						<img src="/images/aider-dark.svg" alt="Aider" />
 					</a>
 				</Link>
 				<div className="navbar-burger burger" data-target="mainNav">
@@ -40,20 +40,13 @@ export default function Header() {
 						signedIn 
 						&&
 						<div className="navbar-item">
-							<span className="tag">
+							<span className="tag mt-2">
 								{currentUser().username}
 							</span>
 							
 						</div>
 					}
 					
-					{
-						publicNavigation.map( (nav, i) => (
-							<a className="navbar-item" key={i} data-href={nav.link} onClick={scroller}>
-								{nav.name}
-							</a>
-						))
-					}
 					<div className="buttons">
 						<Link href="/finances">
 							<a className="button is-small is-dark">Access app</a>

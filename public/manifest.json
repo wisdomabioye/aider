@@ -3,7 +3,7 @@
   "start_url": "/",
   "description": "Decentralized Personal Assistant",
   "icons": [{
-    "src": "https://aider.app/images/aider.png",
+    "src": "http://localhost:4000/images/confession.svg",
     "sizes": "200x198",
     "type": "image/png"
   }]
