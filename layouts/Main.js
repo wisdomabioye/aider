@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import Head from "next/head";
 
 import { signedIn, completeSignIn, currentUser, signOut, checkMigration, migrateLegacyFiles } from "../helpers/blockstack";
@@ -16,6 +16,10 @@ export default function Main(props) {
 	let [signInStatus, setSignInStatus] = useState(signedIn());
 	let [requireMigration, setRequireMigration] = useState(false);
 	let [migrating, setIsMigrating] = useState(false);
+
+	let overlayRef = useRef(null);
+	let sidebarRef = useRef(null);
+
 	useEffect( () => {
 		if (!currentUser()) {
 			completeSignIn()
@@ -40,7 +44,6 @@ export default function Main(props) {
 				setRequireMigration(true);
 			}
 		}
-		
 	}
 
 	async function migrateNow() {
@@ -56,43 +59,48 @@ export default function Main(props) {
 		signOut();
 		setSignInStatus(signedIn());
 	}
+
+	function handleClickOnOverlay() {
+		sidebarRef.current.classList.add("is-hidden-touch");
+		overlayRef.current.style.display = "none";
+	}
 	return (
 		<div className="container is-fullhd has-background-white">
 			<Head>
 	          <title> {props.title ? props.title + " | " : ""}{ appInfo.description }</title>
 			</Head>
-			<div className="columns">
-				<div className="column is-3 fullpage-height has-background-dark pr-3 pl-3">
-					<Sidebar />
-				</div>
-				<div className="column is-9 fullpage-height pr-3 pl-3">
-					{
-						signInStatus 
-						?
-						<div>
-							<TopNav alert={signOutAlert} username={currentUser().username} title={props.title}/>
-							{
-								requireMigration &&
-								<div>
-									<strong>
-										Hi, due to platform upgrade to ensure efficiency, you are required to migrate to the latest version. It will only take few minutes. &nbsp;
-											<button className={"button is-dark is-small " + (migrating && "is-loading")} onClick={migrateNow}>
-												Migrate now
-											</button>
-
-									</strong>
-								</div>
-
-							}
-							
-							{props.children}
-						</div>
-						:
-						<OverlayContainer />
-					}
-					<Footer />
-				</div>
+			<div ref={sidebarRef} className="sidebar is-hidden-touch fullpage-height has-background-dark pr-4 pl-3">
+				<Sidebar />
 			</div>
+
+			<div className="main-content fullpage-height">
+				{
+					signInStatus 
+					?
+					<div className="pl-2 pr-2">
+						<TopNav alert={signOutAlert} username={currentUser().username} title={props.title}/>
+						{
+							requireMigration &&
+							<div>
+								<strong>
+									Hi, due to platform upgrade to ensure efficiency, you are required to migrate to the latest version. It will only take few minutes. &nbsp;
+									<button className={"button is-dark is-small " + (migrating && "is-loading")} onClick={migrateNow}>
+										Migrate now
+									</button>
+								</strong>
+							</div>
+
+						}
+						
+						{props.children}
+					</div>
+					:
+					<OverlayContainer /> /*sign in container*/
+				}
+				<Footer />
+			</div>
+			{/*overlay on .main-content when sidebar is active on small screen*/}
+			<div className="content-overlay" ref={overlayRef} onClick={handleClickOnOverlay}></div>
 		</div>
 	)
 }

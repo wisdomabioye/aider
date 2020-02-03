@@ -11,7 +11,7 @@ export default class MyDocument extends Document {
     let {keywords, description, author} = appInfo;
 
     return (
-      <html>
+      <html lang="en">
         <Head>
           <meta key="viewport" name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="keywords" content={ keywords } />

@@ -109,7 +109,7 @@ export default function Drive() {
 
 	return (
 		<Main title="Encrypted Drive">
-			<div className="section">
+			<div className="section pt-1">
 				<div className="mb-2">
 					<div className="buttons are-small">
 						<Link href="/drive/upload">

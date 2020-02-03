@@ -93,11 +93,11 @@ export default function Notes() {
 				</div>
 				:
 				<div className="has-text-centered"> 
-					<h3 className="is-size-5 mb-2">No Note is found</h3> 
+					<h3 className="is-size-6 mb-2">No Note is found</h3> 
 					<Button 
 						className="button is-dark is-small" 
 						onClick={() => handleVisibility("create")}
-						text="New Note"
+						text="Make a Note"
 					/>
 				</div>
 				:

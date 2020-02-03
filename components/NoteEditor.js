@@ -1,8 +1,6 @@
 import LoadingIcon from "./LoadingIcon";
 
 const ReactQuill = typeof window === "object" ? require("react-quill") : () => <LoadingIcon />;
-import ("../styles/quill.snow.scss");
-// import ("../styles/quill.core.scss");
 
 export default function NoteEditor(props) {
 
