@@ -13,7 +13,7 @@ export default function Index() {
 				</div>
 				<div className="column is-7 mt-4">
 					<div className="box has-background-dark">
-						<img src="/images/aider_finance.png" alt="Aider Finance" />
+						<img src="/images/aider_finance.png" alt="Aider Slide" />
 					</div>
 				</div>
 			</div>

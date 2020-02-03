@@ -1,6 +1,6 @@
 exports.appInfo = {
 	name: "Aider",
-	description: "Manage your finances, files and schedules more securely like a pro.",
+	description: "Manage your finances, files, schedules and notes more securely like a pro.",
 	tagline: "Decentralized Personal Assistant",
 	keywords: "",
 	author: "Wisdom Abioye",
@@ -35,13 +35,7 @@ exports.appNavigation = [
 	},
 	{
 		name: "Notes",
-		link: "/notes",
-		subMenu: [
-			{
-				name: "New note",
-				link: "/new"
-			}
-		]
+		link: "/notes"
 	},
 	{
 		name: "Home",
@@ -53,24 +47,25 @@ exports.appNavigation = [
 exports.features = [
 	{
 		name: "Finances",
-		description: "Track your earning and spending, daily and monthly. Spend smarter and see your wealth grows.",
+		description: "Monitor your earning and spending, daily and monthly. Spend smarter and grow your wealth.",
 		icon: "icon-chart-line"
 	},
 	{
 		name: "Encrypted Drive",
-		description: "Upload, download, and share files like a pro. Unlimited storage space, save from URL, Encrypt and decrypt and many more",
+		description: "Upload, download and share files like a pro. Save from URL, encrypt and decrypt and many more",
 		icon: "icon-docs"
+	},
+	{
+		name: "Notes",
+		description: "Make secure notes with rich text editor and remember everything important to you.",
+		icon: "icon-doc-text"
 	},
 	{
 		name: "Schedules (coming soon)",
 		description: "Make a schedule, receive alert and plan better",
 		icon: "icon-list-nested"
 	},
-	{
-		name: "Notes (coming soon)",
-		description: "Make secure notes with rich text editor, download or share any where and any time, securely just like a pro",
-		icon: "icon-doc-text"
-	}
+	
 ]
 
 

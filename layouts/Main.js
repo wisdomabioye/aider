@@ -1,7 +1,7 @@
 import {useState, useEffect} from "react";
 import Head from "next/head";
 
-import { signedIn, completeSignIn, currentUser, signOut } from "../helpers/blockstack";
+import { signedIn, completeSignIn, currentUser, signOut, checkMigration, migrateLegacyFiles } from "../helpers/blockstack";
 
 import { appInfo } from "../app.config";
 import Sidebar from "../components/Sidebar";
@@ -14,7 +14,8 @@ import ('../styles/main.scss');
 
 export default function Main(props) {
 	let [signInStatus, setSignInStatus] = useState(signedIn());
-
+	let [requireMigration, setRequireMigration] = useState(false);
+	let [migrating, setIsMigrating] = useState(false);
 	useEffect( () => {
 		if (!currentUser()) {
 			completeSignIn()
@@ -28,7 +29,29 @@ export default function Main(props) {
 			})
 		}
 		setSignInStatus(signedIn());
-	})
+		findLegacyFiles();
+	}, [signInStatus, migrating])
+
+	async function findLegacyFiles() {
+		
+		if (signInStatus) {
+			let files = await checkMigration();
+			if (files) {
+				setRequireMigration(true);
+			}
+		}
+		
+	}
+
+	async function migrateNow() {
+		setIsMigrating(true);
+
+		await migrateLegacyFiles();
+
+		setIsMigrating(false);
+		setRequireMigration(false);
+	}
+
 	function signOutAlert() {
 		signOut();
 		setSignInStatus(signedIn());
@@ -47,11 +70,22 @@ export default function Main(props) {
 						signInStatus 
 						?
 						<div>
-							<TopNav alert={signOutAlert} username={currentUser().username}/>
-							<div>
-								<h1 className="is-size-5 mb-2 mt-2">{props.title}</h1>
-								{props.children}
-							</div>
+							<TopNav alert={signOutAlert} username={currentUser().username} title={props.title}/>
+							{
+								requireMigration &&
+								<div>
+									<strong>
+										Hi, due to platform upgrade to ensure efficiency, you are required to migrate to the latest version. It will only take few minutes. &nbsp;
+											<button className={"button is-dark is-small " + (migrating && "is-loading")} onClick={migrateNow}>
+												Migrate now
+											</button>
+
+									</strong>
+								</div>
+
+							}
+							
+							{props.children}
 						</div>
 						:
 						<OverlayContainer />
@@ -65,9 +99,11 @@ export default function Main(props) {
 
 function OverlayContainer() {
 	return (
-		<div className="box has-text-centered">
-			<h2 className="is-size-5 mb-2">You need to sign in first</h2>
-			<SignInButton/>
+		<div className="box">
+			<div className="has-text-centered">
+				<h2 className="is-size-5 mb-2">You need to sign in first</h2>
+				<SignInButton/>
+			</div>
 		</div>
 	)
 }

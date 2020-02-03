@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Main from "../../layouts/Main";
 import {InputExpanded, Select, Button} from "../../components/FormElements";
+import SpinnerWithText from "../../components/SpinnerWithText";
 
 import { getFileIcon, dayMonthTime, downloader, numberToArray } from "../../helpers/main";
-import { getFile, getFileUrl, decryptAFile, putFile, getDataJSON, removeData, removeFromFileListJSON, updateFileListJSON } from "../../helpers/blockstack";
+import { Storage, JSONFile } from "../../helpers/blockstack";
 
 /*
-* filelist.json
+* config/drive.json
 * We keep a json record of file list
 * [
 * 	{name, size, type, date, shared},
@@ -15,7 +16,10 @@ import { getFile, getFileUrl, decryptAFile, putFile, getDataJSON, removeData, re
 * ]
 */
 
-export default function Files() {
+const DRIVE_CONFIG = new JSONFile("config/", "drive.json");
+const DRIVE = new Storage("drive/");
+
+export default function Drive() {
 	let [allfileList, updateAllFileList] = useState(null);
 	
 	let [pager, setPager] = useState({limit: 5, page: 1});
@@ -27,11 +31,11 @@ export default function Files() {
 
 	useEffect(() => {
 		fetchFileList()
-		.then(files => updateAllFileList(files || []))
+		.then(files => updateAllFileList((files && files.reverse()) || []))
 	}, [watcher]);
 
 	async function fetchFileList() {
-		return await getDataJSON("filelist");
+		return await DRIVE_CONFIG.getJSON();
 	}  
 
 	function handlePager(e) {
@@ -53,15 +57,16 @@ export default function Files() {
 
 		if (fileInfo.encrypt) {
 			// get the file content and decrypt
-			await decryptAFile(filename, {contentType: fileInfo.type})
+			await DRIVE.decrypt(filename, {contentType: fileInfo.type})
 		}
 
 		//get the fileUrl
-		return await getFileUrl(filename)
+		return DRIVE.getFileUrl(filename)
 		.then(async (url) => {
-			// update the filelist.json 
+			// update the config/drive.json 
 			// add shared: url
-			await updateFileListJSON("filelist", index, {...fileInfo, shared: url, encrypt: false});
+			await DRIVE_CONFIG.replaceJSONIndex(DRIVE_CONFIG.filename, index, {...fileInfo, shared: url, encrypt: false});
+			
 			updateWatcher(Math.random());
 			return url;
 		})
@@ -77,7 +82,7 @@ export default function Files() {
 			let fileInfo = allfileList.find(file => file.name == filename);
 			if (!fileInfo) continue;
 
-			let file = await getFile(filename);
+			let file = await DRIVE.getFile(filename);
 			downloader(file, fileInfo.type, filename);
 		}
 	} 
@@ -85,11 +90,11 @@ export default function Files() {
 	async function deleteFiles(filenames) {
 		for (let filename of filenames) {
 			// remove the actual file in storage
-			await removeData(filename);
+			await DRIVE.remove(filename);
 		}
 		//remove all the file history
-		await removeFromFileListJSON("filelist", filenames);
-		//refresh fileList in UI
+		await DRIVE_CONFIG.removeFromJSON(DRIVE_CONFIG.filename, filenames);
+		//refresh drove in UI  through watcher
 		// await fetchFileList();
 		updateWatcher(Math.random());
 	}
@@ -104,10 +109,10 @@ export default function Files() {
 
 	return (
 		<Main title="Encrypted Drive">
-			<div className="section mt-4">
-				<div className="mb-4">
+			<div className="section">
+				<div className="mb-2">
 					<div className="buttons are-small">
-						<Link href="/files/upload">
+						<Link href="/drive/upload">
 							<a className="button is-dark">
 								Upload new
 							</a>
@@ -280,15 +285,7 @@ function FileListDisplay(props) {
 				}
 			</div>
 			<div className="buttons is-pulled-right">
-				{
-					ongoingAction &&
-					<span className="button is-white">
-						<Button
-							className="button is-loading is-white"
-						/>
-						{ongoingAction}
-					</span>
-				}
+				<SpinnerWithText action={ongoingAction}/>
 				{<Button 
 					disabled={"disabled"} 
 					className="button is-light icon-pencil"
@@ -345,12 +342,13 @@ function FileListDisplay(props) {
 						))
 						:
 						<tr>
-							<td colSpan="5" className="has-text-centered is-size-5">File list is empty! <Link href="/files/upload"><a>Upload files</a></Link></td>
+							<td colSpan="5" className="has-text-centered is-size-5">File list is empty! <Link href="/drive/upload"><a>Upload files</a></Link></td>
 						</tr>
 						:
 						<tr>
-							<td colSpan="5" className="has-text-centered"><Button className="button is-loading is-white is-small"/>
-							 Fetching files...</td>
+							<td colSpan="5" className="has-text-centered">
+								<SpinnerWithText action="Fetching files..." />
+							 </td>
 						</tr>
 					}
 				</tbody>

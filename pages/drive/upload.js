@@ -3,22 +3,25 @@ import { useRouter } from "next/router";
 
 import Main from "../../layouts/Main";
 import { Button } from "../../components/FormElements";
-import { getFileIcon, toArray } from "../../helpers/main";
-import { putFile, addToFileListJSON, getDataJSON } from "../../helpers/blockstack";
+import { getFileIcon, toArray,renameDuplicateFileName } from "../../helpers/main";
+import { Storage, JSONFile} from "../../helpers/blockstack";
 
 /*
-* filelist.json
+* config/drive.json
 * We keep a json record of file list
 * [
-* 	{name, size, date},
-* 	{name, size, date},
+* 	{name, size, type, date, shared},
+* 	{name, size, type, date, shared},
 * ]
 */
+const DRIVE_CONFIG = new JSONFile("config/", "drive.json");
+const DRIVE = new Storage("drive/");
+
 export default function UploadFile() {
 	let [filesInfo, updateFilesInfo] = useState([]);
 	let [selectedFileList, setSelectedFileList] = useState([]); //FileList objects
 	let [uploading, setUploading] = useState(false);
-	let [fileListJSON, updateFileListJSON] = useState([]); //list of files info already in storage
+	let [fileListJSON, updateListJSON] = useState([]); //list of files info already in storage
 	let [dragCss, setDragCss] = useState({});
 
 	let router = useRouter();
@@ -28,27 +31,9 @@ export default function UploadFile() {
 	}, []);
 
 	async function fetchFileList() {
-		let files = await getDataJSON("filelist");
-		updateFileListJSON(files || []);
+		let files = await DRIVE_CONFIG.getJSON();
+		updateListJSON(files || []);
 	} 
-
-	function renameDuplicateFileName(name) {
-		let duplicate = fileListJSON.find(file => file.name == name);
-		
-		if (duplicate) {
-			//build new name and check (recursion)
-			let extentionIndex = name.lastIndexOf(".");
-			let extention = name.substring(extentionIndex);
-			
-			let newName = name.substring(0, extentionIndex) + "(0)";
-			
-			newName = newName + extention;
-			return renameDuplicateFileName(newName);
-			
-		} else {
-			return name;
-		}
-	}
 
 	function toggleEncrypt(e) {
 		let el = e.target;
@@ -58,7 +43,6 @@ export default function UploadFile() {
 
 		newFilesInfo[index]["encrypt"] = !encrypt;
 		updateFilesInfo(newFilesInfo);
-
 	}
 
 	function inputChange(e) {
@@ -135,11 +119,12 @@ export default function UploadFile() {
 			try {
 				updateFileUploadStatus(index, "uploading...");
 				let arrayBuffer = await readFileAsync(file);
-				let name = renameDuplicateFileName(file.name);
+				let name = renameDuplicateFileName(file.name, fileListJSON);
 				
 				let thisFileInfo = filesInfo[index];
-				let uploader = await putFile(name, arrayBuffer, {encrypt: thisFileInfo.encrypt});
-				await addToFileListJSON("filelist", {...thisFileInfo, name});
+				let uploader = await DRIVE.putFile(name, arrayBuffer, {encrypt: thisFileInfo.encrypt});
+
+				await DRIVE_CONFIG.pushToJSON(DRIVE_CONFIG.filename, {...thisFileInfo, name});
 				
 				updateFileUploadStatus(index, "uploaded");
 			
@@ -153,7 +138,7 @@ export default function UploadFile() {
 	}
 
 	return (
-		<Main>
+		<Main title="Upload Files">
 			<div className="mt-4 mr-2 ml-2">
 				<div className="section dropzone has-background-light"
 					onDragEnter={dragEnter} 

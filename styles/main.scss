@@ -61,10 +61,18 @@ span, small, strong {
 	min-height: 96vh;
 }
 
+.threeQuater-height {
+	min-height: 72vh;
+}
+
 .halfpage-height {
 	min-height: 48vh;
 }
 
+.note-editor {
+	height: 350px;
+	overflow: hidden;
+}
 .pointer:hover {
 	cursor: pointer;
 }
@@ -83,26 +91,6 @@ span, small, strong {
 }
 .thin-text {
 	font-weight: lighter;
-}
-
-.border-left {
-	border-left: 4px solid blue;
-	padding-left: 8px;
-	padding-right: 8px;
-	background-color: #eee;
-}
-
-footer ul {
-	margin-top: 25px;
-}
-footer ul li {
-	margin-bottom: 10px;
-}
-footer ul li > a {
-	font-size: 14px;
-}
-footer ul li > a:hover{
-	color: #fff;
 }
 
 /*padding classes*/

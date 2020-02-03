@@ -41,6 +41,24 @@ export function filenameToDate(filename) {
 	return new Date(year, month - 1);
 }
 
+export function renameDuplicateFileName(name, list) {
+	let duplicate = list.find(file => file.name == name);
+	
+	if (duplicate) {
+		//build new name and check (recursion)
+		let extentionIndex = name.lastIndexOf(".");
+		let extention = name.substring(extentionIndex);
+		
+		let newName = name.substring(0, extentionIndex) + "(0)";
+		
+		newName = newName + extention;
+		return renameDuplicateFileName(newName, list);
+		
+	} else {
+		return name;
+	}
+}
+
 /*
 * From https://stackoverflow.com/a/315767/3186314
 */
@@ -180,4 +198,21 @@ export function downloadURI(uri, name) {
     link.download = name;
     link.href = uri;
     link.click();
+}
+
+export function removeFileExtention(filename) {
+	let index = filename.lastIndexOf(".");
+	if (index > 0) {
+		return filename.substring(0, index);
+	} 
+
+	return filename;
+}
+
+export function truncateText(text, position) {
+
+	if ((text.length - 1) > position) {
+		return text.substring(0, position) + "...";
+	}
+	return text;
 }

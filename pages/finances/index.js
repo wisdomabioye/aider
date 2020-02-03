@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 
 import Main from "../../layouts/Main";
-
 import { Input, Button, Select } from "../../components/FormElements";
 import Loading from "../../components/LoadingIcon";
 import FinanceChart from "../../components/LineChart";
 import { MonthPicker } from "../../components/DatePicker";
-import {getDataJSON, setDataJSON} from "../../helpers/blockstack";
+import { JSONFile } from "../../helpers/blockstack";
 import { financeFilename, daysInMonth, numberToArray, sumAmount } from "../../helpers/main";
 
+const FINANCE = new JSONFile("finances/");
 
 export default function Finance() {
 	let [formConfig, setFormConfig] = useState({});
@@ -21,7 +21,7 @@ export default function Finance() {
 
 	async function fetchData() {
 		try {
-			let finances = await getDataJSON(targetMonth);
+			let finances = await FINANCE.getJSON(addJSONExt(targetMonth));
 			setData(finances);
 		} catch (error) {
 			console.log(error);
@@ -261,14 +261,13 @@ async function setOrMergeThisMonthFinanceData(data) {
 	let date = new Date();
     let today = date.getDate();
     let thisMonth = financeFilename(date) // filename
-    
     let targetType;
 
     //grab finance type
     if (data["type"] == "Spend") {
-        targetType = "spendings"
+        targetType = "spendings";
     } else if (data["type"] == "Earn") {
-        targetType = "earnings"
+        targetType = "earnings";
     }
     //build the new finance
     const newFinance = {amount: data["amount"], comment: data["comment"]};
@@ -280,13 +279,12 @@ async function setOrMergeThisMonthFinanceData(data) {
         spendings: []
     }
 
-
-    return await getDataJSON(thisMonth)
+    return await FINANCE.getJSON(addJSONExt(thisMonth))
     .then( oldData => {
         if (!oldData) {
             // build the new month finance file
             dailyFinanceSchema[targetType].push(newFinance);
-            return setDataJSON(thisMonth, [dailyFinanceSchema]);
+            return FINANCE.setJSON(addJSONExt(thisMonth), [dailyFinanceSchema]);
         } else {
             // there is oldData
             // lets update it
@@ -305,18 +303,22 @@ async function setOrMergeThisMonthFinanceData(data) {
                 todayDoc[targetType].push(newFinance);
                 oldData[index] = todayDoc;
                 
-                return setDataJSON(thisMonth, oldData);
+                return FINANCE.setJSON(addJSONExt(thisMonth), oldData);
             } else {
                 //no today doc
                 //build today doc
                 dailyFinanceSchema[targetType].push(newFinance);
                 oldData.push(dailyFinanceSchema);
-                return setDataJSON(thisMonth, oldData);
+                return FINANCE.setJSON(addJSONExt(thisMonth), oldData);
             }
-
         }
     })
     .catch(error => {
         console.log("error", error);
     })
+}
+
+
+function addJSONExt(name) {
+	return name + ".json";
 }
