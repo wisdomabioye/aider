@@ -241,6 +241,24 @@
       "src": "mfglabs"
     },
     {
+      "uid": "f9c8ea86275ca16128235c6452b67b8e",
+      "css": "user-secret",
+      "code": 61979,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "1a7104205ea96e6f40ac716d0ca72f21",
+      "css": "lock",
+      "code": 59413,
+      "src": "entypo"
+    },
+    {
+      "uid": "9fecfcfe680a469caedeeb40641a479f",
+      "css": "handshake",
+      "code": 62133,
+      "src": "fontawesome"
+    },
+    {
       "uid": "b8276b48e127bbfe23823b2f318a3936",
       "css": "bch",
       "code": 59392,

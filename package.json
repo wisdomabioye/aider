@@ -13,6 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^16.0.0",
+    "@ckeditor/ckeditor5-build-decoupled-document": "^16.0.0",
+    "@ckeditor/ckeditor5-react": "^2.1.0",
+    "@ckeditor/ckeditor5-upload": "^16.0.0",
     "@zeit/next-sass": "^1.0.1",
     "blockstack": "^19.3.0",
     "chart.js": "^2.9.3",

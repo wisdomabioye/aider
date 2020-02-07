@@ -3,7 +3,7 @@ import {useState, useEffect} from "react";
 import Main from "../../layouts/Main";
 import LoadingIcon from "../../components/LoadingIcon";
 import SpinnerWithText from "../../components/SpinnerWithText";
-import NoteEditor from "../../components/NoteEditor";
+import NoteEditor from "../../components/Note2Editor";
 import {Input, Button} from "../../components/FormElements";
 
 import {useDebounce} from "../../helpers/hooks";
@@ -213,8 +213,10 @@ function EditNote(props) {
 		setIsSaving(false);
 	}
 
-	function updateNoteContent(value) {
-		setNoteContent(value);
+	function updateNoteContent(event, editor) {
+		let data = editor.getData();;
+		console.log(data);
+		setNoteContent(data);
 	}
 
 	return (
@@ -271,8 +273,10 @@ function NewNote(props) {
 		setIsSaving(false);
 	}
 
-	function updateNoteContent(value) {
-		setNoteContent(value);
+	function updateNoteContent(value, arg2) {
+		console.log("arg1", value);
+		console.log("arg2", arg2);
+		// setNoteContent(value);
 	}
 
 	function handleNameChange(e) {

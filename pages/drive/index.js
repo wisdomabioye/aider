@@ -46,10 +46,8 @@ export default function Drive() {
 	async function shareFile(filename) {
 		// resave a file by setting encrypt to false
 		// then get the file URL
-		let index;
 		let fileInfo = allfileList.find( (file, i) => {
 						if(file.name == filename) {
-							index = i;
 							return true;
 						}
 					});
@@ -65,7 +63,7 @@ export default function Drive() {
 		.then(async (url) => {
 			// update the config/drive.json 
 			// add shared: url
-			await DRIVE_CONFIG.replaceJSONIndex(DRIVE_CONFIG.filename, index, {...fileInfo, shared: url, encrypt: false});
+			await DRIVE_CONFIG.pushUniqueToJSON(DRIVE_CONFIG.filename, fileInfo.name, {...fileInfo, shared: url, encrypt: false});
 			
 			updateWatcher(Math.random());
 			return url;

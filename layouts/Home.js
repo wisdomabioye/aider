@@ -17,7 +17,7 @@ export default function Home(props) {
 	}, [])
 	
 	return (
-		<div className="container has-background-light">
+		<div className="container has-background-white pb-4">
 			<Head>
 	          <title>{appInfo.name} | { appInfo.description }</title>
 			</Head>

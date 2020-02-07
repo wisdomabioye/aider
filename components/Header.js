@@ -14,13 +14,13 @@ export default function Header() {
 
 		if (element) {
 			e.preventDefault();
-			element.scrollIntoView();
+			element.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 			return;
 		}
 	}
 	
 	return (
-		<nav className="navbar is-light">
+		<nav className="navbar is-transparent">
 			<div className="navbar-brand">
 				<Link href="/">
 					<a className="navbar-item">
@@ -46,6 +46,9 @@ export default function Header() {
 							
 						</div>
 					}
+					<a className="navbar-item" data-target="why-aider" onClick={scroller}>Why Aider?</a>
+					<a className="navbar-item" data-target="features" onClick={scroller}>Features</a>
+					
 					
 					<div className="buttons">
 						<Link href="/finances">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Home from "../layouts/Home";
 
 import IntroHero from "../components/IntroHero";
+import WhyAider from "../components/WhyAider";
 import Features from "../components/Features";
 
 export default function Index() {
@@ -16,6 +17,9 @@ export default function Index() {
 						<img src="/images/aider_finance.png" alt="Aider Slide" />
 					</div>
 				</div>
+			</div>
+			<div className="section pb-1" id="why-aider">
+				<WhyAider />
 			</div>
 			<div className="section" id="features">
 				<Features />

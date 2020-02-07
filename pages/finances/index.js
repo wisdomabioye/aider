@@ -7,6 +7,7 @@ import FinanceChart from "../../components/LineChart";
 import { MonthPicker } from "../../components/DatePicker";
 import { JSONFile } from "../../helpers/blockstack";
 import { financeFilename, daysInMonth, numberToArray, sumAmount } from "../../helpers/main";
+import { sampleFinanceData } from "../../app.config";
 
 const FINANCE = new JSONFile("finances/");
 
@@ -14,6 +15,8 @@ export default function Finance() {
 	let [formConfig, setFormConfig] = useState({});
 	let [targetMonth, setTargetMonth] = useState(financeFilename());
 	let [data, setData] = useState(null);
+	let [usingSampleData, setUseSampleDate] = useState(false);
+	let [originalData, setOriginalData] = useState(null);
 
 	useEffect( () => {
 		fetchData();	
@@ -23,6 +26,7 @@ export default function Finance() {
 		try {
 			let finances = await FINANCE.getJSON(addJSONExt(targetMonth));
 			setData(finances);
+			setOriginalData(finances);
 		} catch (error) {
 			console.log(error);
 		}
@@ -52,6 +56,20 @@ export default function Finance() {
 		}
 	}
 
+	function toggleSampleData() {
+		if (usingSampleData) {
+			let newData = JSON.parse(JSON.stringify(originalData));
+			setData(newData);
+			setUseSampleDate(false);
+		} else {
+			let newData = JSON.parse(JSON.stringify(sampleFinanceData));
+			let previousData = JSON.parse(JSON.stringify(data || ""));
+			setData(newData);
+			setOriginalData(previousData);
+			setUseSampleDate(true);
+		}
+	}
+
 	function changeDate(e) {
 		let newDate = financeFilename(e.target.value);
 		setTargetMonth(newDate);
@@ -59,8 +77,17 @@ export default function Finance() {
 
 	return (
 		<Main title="Financial Record">
-			<MonthPicker changeHandler={changeDate} />
-			<FinanceChart data={data} />
+			<div className="columns is-mobile">
+				<div className="column is-9">
+					<MonthPicker changeHandler={changeDate} />
+				</div>
+				<div className="column is-3">
+					<button className="button is-dark is-small" onClick={toggleSampleData}>{usingSampleData ? "Remove sample data" : "Use sample data"}</button>
+				</div>
+			</div>
+			<div className="mt-1">
+				<FinanceChart data={data} />
+			</div>
 			<div>
 				<div className="buttons are-small">
 					

@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { appNavigation } from "../app.config";
+import { appNavigation, appInfo } from "../app.config";
 
 import Logo from "./Logo";
 
 export default function Sidebar(props) {
-	
+	let {name} = appInfo;
 	return (
 		<div>
 			<Logo />
-			<h2 className="has-text-centered is-size-5 mt-1 mb-4 has-text-light">Aider App</h2>
+			<h2 className="has-text-centered is-size-5 mt-1 mb-4 has-text-light">{name}</h2>
 			<aside className="menu pl-2">
 			  <ul className="menu-list">
 			  	{

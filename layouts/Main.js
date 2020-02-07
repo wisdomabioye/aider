@@ -10,6 +10,8 @@ import SignInButton from "../components/SignInButton";
 import Footer from "../components/Footer";
 
 import ('../styles/nprogress.scss');
+import ('../styles/quill.core.scss');
+import ('../styles/quill.snow.scss');
 import ('../styles/main.scss');
 
 export default function Main(props) {
@@ -73,7 +75,7 @@ export default function Main(props) {
 				<Sidebar />
 			</div>
 
-			<div className="main-content fullpage-height">
+			<div className="main-content fullpage-height pb-4">
 				{
 					signInStatus 
 					?

@@ -1,7 +1,7 @@
 {
-  "name": "Decentralized Personal Assistant",
+  "name": "Aider Pro",
   "start_url": "/",
-  "description": "Manage your finances, files and schedules more securely like a pro",
+  "description": "Manage your finances, files, schedules and notes more securely like a pro.",
   "icons": [{
     "src": "https://aider.pro/images/aider-dark.svg",
     "sizes": "200x198",
