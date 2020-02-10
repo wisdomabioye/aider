@@ -26,16 +26,10 @@ exports.appNavigation = [
 	{
 		name: "Drive",
 		link: "/drive",
-		subMenu: [
-			{
-				name: "New file",
-				link: "/upload"
-			}
-		]
 	},
 	{
 		name: "Notes",
-		link: "/notes"
+		link: "/notes",
 	},
 	{
 		name: "Home",

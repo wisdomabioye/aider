@@ -1,1 +1,1 @@
-#### Decentralized Personal Assistant - Anonymous and Encrypted powered by Blockstack
+#### Manage your finances, files, schedules and notes more securely like a pro

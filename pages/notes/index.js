@@ -1,13 +1,13 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 
 import Main from "../../layouts/Main";
 import LoadingIcon from "../../components/LoadingIcon";
 import SpinnerWithText from "../../components/SpinnerWithText";
-import NoteEditor from "../../components/Note2Editor";
-import {Input, Button} from "../../components/FormElements";
+import NoteEditor from "../../components/NoteEditor";
+import {Input, Select, Button} from "../../components/FormElements";
 
 import {useDebounce} from "../../helpers/hooks";
-import { removeFileExtention, truncateText, dayMonthTime, renameDuplicateFileName } from "../../helpers/main";
+import { removeFileExtention, truncateText, dayMonthTime, renameDuplicateFileName, findByName, fileCategory, buildNoteInfo } from "../../helpers/main";
 import { Storage, JSONFile } from "../../helpers/blockstack";
 
 /*
@@ -24,34 +24,23 @@ const NOTE = new Storage("notes/");
 export default function Notes() {
 	let [notelistJSON, setNotelistJSON] = useState(null);
 	let [visibility, setVisibility] = useState({list: true, view: false, edit: false, create: false});
-	let [noteIndex, setNoteIndex] = useState(-1);
+	let [currentNote, setCurrentNote] = useState({});
 	let [watcher, setWatcher] = useState(0);
-	let [ongoingAction, setOngoingAction] = useState(false);
+	
 	useEffect(() => {
 		NOTE_CONFIG.getJSON()
-		.then(notes => setNotelistJSON(notes ? notes.reverse() : []))
+		.then(notes => setNotelistJSON(notes ? notes.reverse() /*sort by date desc*/ : []))
 		.catch(console.log)
 	}, [watcher])
-
-	async function deleteNote(index) {
-		let target = notelistJSON[index];
-		setOngoingAction("Removing a note...");
-		await NOTE.remove(target.name);
-		await NOTE_CONFIG.removeFromJSON(NOTE_CONFIG.filename, target.name);
-		//re-render
-		setWatcher(Math.random());
-		setOngoingAction(false);
-	}
 
 	async function saveNote(name, content, config) {
 		await NOTE.putFile(name, content);
 		await NOTE_CONFIG.pushUniqueToJSON(NOTE_CONFIG.filename, name, config);
-		setWatcher(Math.random());
+		refresh()
 	}
-
-	function handleVisibility(comp, index) {
-		//update noteIndex if available
-		setNoteIndex(index);
+	function handleVisibility(comp, name) {
+		//update currentNote if available
+		setCurrentNote(findByName(name, notelistJSON));
 		// handle component visibility
 		let newVisibility = {};
 		for (let item in visibility) {
@@ -61,6 +50,11 @@ export default function Notes() {
 		newVisibility[comp] = true;
 		setVisibility(newVisibility);
 	}
+
+	function refresh() {
+		setWatcher(Math.random());
+	}
+
 	return (
 		<Main title="Notes">
 			{
@@ -71,23 +65,27 @@ export default function Notes() {
 				<div>
 					{
 						visibility.list &&
-						<div>
-							<Button 
-								className="button is-dark is-small" 
-								onClick={() => handleVisibility("create")}
-								text="New Note"
-							/>
-							<SpinnerWithText action={ongoingAction} />&nbsp;
-							<ListNote notelist={notelistJSON} visible={handleVisibility} delete={deleteNote}/>
-						</div>
+						<ListNote 
+							notelist={notelistJSON} 
+							visible={handleVisibility} 
+							refresh={refresh}
+						/>
 					}
 					{
 						visibility.view &&
-						<ViewNote note={notelistJSON[noteIndex]} visible={handleVisibility}/>
+						<ViewNote 
+							note={currentNote} 
+							visible={handleVisibility}
+							refresh={refresh}
+						/>
 					}
 					{
 						visibility.edit &&
-						<EditNote note={notelistJSON[noteIndex]} visible={handleVisibility} saveNote={saveNote}/>
+						<EditNote 
+							note={currentNote} 
+							visible={handleVisibility} 
+							saveNote={saveNote}
+						/>
 					}
 					
 				</div>
@@ -105,40 +103,200 @@ export default function Notes() {
 			}
 			{
 				visibility.create &&
-				<NewNote notes={notelistJSON} visible={handleVisibility} saveNote={saveNote}/>
+				<NewNote 
+					notelist={notelistJSON} 
+					visible={handleVisibility} 
+					saveNote={saveNote}
+					refresh={refresh}
+				/>
 			}
 		</Main>
 	)
 }
 
 function ListNote(props) {
+	let [filteredNote, setFilteredNote] = useState(props.notelist)
+	let [noteCategory, setNoteCategory] = useState("all");
+	let [searchValue, setSearchValue] = useState("");
+	let [ongoingAction, setOngoingAction] = useState(null);
+	
+	useEffect(() => {
+		filterNote(noteCategory, searchValue);
+	}, [props, noteCategory, searchValue])
+
+	async function toggleStar(name) {
+		let target = findByName(name, props.notelist);
+		let starred = target.starred;
+		if (starred) {
+			setOngoingAction("Unstarring a note...");
+		} else {
+			setOngoingAction("Starring a note...");
+		}
+
+		await NOTE_CONFIG.pushUniqueToJSON(NOTE_CONFIG.filename, name, {...target, starred: !starred});
+		//re-render parent
+		props.refresh();
+		setOngoingAction(null);
+	}
+
+	async function toggleTrash(name) {
+		let target = findByName(name, props.notelist);
+		let trashed = target.trashed;
+		if (trashed) {
+			setOngoingAction("Restoring a note...");
+		} else {
+			setOngoingAction("Trashing a note...");
+		}
+		
+		await NOTE_CONFIG.pushUniqueToJSON(NOTE_CONFIG.filename, name, {...target, trashed: !trashed});
+		//re-render parent
+		props.refresh();
+		setOngoingAction(null);
+	}
+
+	async function remove(name) {
+		let target = findByName(name, props.notelist);
+		setOngoingAction("Removing a note...");
+		await NOTE.remove(target.name);
+		await NOTE_CONFIG.removeFromJSON(NOTE_CONFIG.filename, target.name);
+		//re-render parent
+		props.refresh();
+		setOngoingAction(null);
+	}
+
+	function filterNote(category, searchValue) {
+		let newFilterNote;
+
+		switch(category) {
+			case "starred":
+				newFilterNote = props.notelist.filter( note => note.starred && !note.trashed);
+			break;
+
+			case "shared":
+				newFilterNote = props.notelist.filter( note => note.shared && !note.trashed);
+			break;
+
+			case "trashed":
+				newFilterNote = props.notelist.filter( note => note.trashed);
+			break;
+
+			default:
+				newFilterNote = props.notelist.filter( note => !note.trashed);
+			break;
+		}
+
+		if (searchValue) {
+			searchValue = searchValue.toLowerCase();
+			newFilterNote = newFilterNote.filter(note => note.name.toLowerCase().includes(searchValue));
+		}
+		setFilteredNote(newFilterNote);		
+	}
+	function filterNoteBySearch(name) {
+
+	}
+	
+	function handleFilterForm(e) {
+		let {name, value} = e.target;
+		if (name == "category") {
+			setNoteCategory(value);
+		} else if (name == "search") {
+			setSearchValue(value);
+		}
+	}
 
 	return (
-		<div className="columns is-multiline is-centered">
-			{
-				props.notelist.map((note, i) => (
-					<div key={i} className="column is-4">
-						<div className="box has-text-centered">
-							<a className="is-block" onClick={props.visible.bind(props.visible, "view", i)}>
-								<span className="icon-doc-text is-size-1"></span>
-							</a>
-							<h2 title={note.name}>{truncateText(removeFileExtention(note.name), 12)}</h2>
-							<div className="tags are-small is-centered mt-2">
-								<span className="tag icon-clock" title={dayMonthTime(note.created)}></span>
-								<span className="tag pointer icon-pencil" title="Edit" onClick={props.visible.bind(props.visible, "edit", i)}></span>
-								<span className="tag pointer icon-trash" title="Remove" onClick={props.delete.bind(props.delete, i)}></span>
+		<div>
+			<div className="columns is-mobile is-multiline">
+				<div className="column is-narrow">
+					<Button 
+						className="button is-dark is-small" 
+						onClick={props.visible.bind(props.visible, "create")}
+						text="New Note"
+					/>
+				</div>
+				<div className="column is-narrow">
+					<Select
+						name="category"
+						value={noteCategory}
+						className="is-small"
+						options={fileCategory()}
+						onChange={handleFilterForm}
+					/>
+				</div>
+				
+				<div className="column is-narrow pt-1 is-right">
+					<Input
+						name="search"
+						value={searchValue}
+						placeholder="Search note ..."
+						onChange={handleFilterForm}
+						className="is-small"
+					/>
+				</div>
+				<div className="column is-narrow">
+					<SpinnerWithText 
+						action={ongoingAction} 
+					/>
+				</div>
+			</div>
+			<div className="columns is-multiline is-centered mt-2">
+				{	
+					filteredNote.length
+					?
+					filteredNote.map((note, i) => (
+						<div key={i} className="column is-narrow">
+							<div className="box has-text-centered pt-1">
+								<div className="tags are-small is-right is-marginless is-paddingless">
+									{
+										note.shared &&
+										<span className="tag icon-share is-white" title="Note is shared"></span>
+									}
+
+									<span className="tag icon-clock is-white" title={dayMonthTime(note.created)}></span>
+								</div>
+
+								<a className="is-block" onClick={props.visible.bind(props.visible, "view", note.name)} title="Tap to view note">
+									<span className="icon-doc-text is-size-1"></span>
+								</a>
+								<h2 title={note.name}>{truncateText(removeFileExtention(note.name), 12)}</h2>
+								<div className="tags are-small is-centered mt-1">
+									{
+										note.starred
+										?
+										<span className="tag pointer icon-star has-text-danger" title="Unstar note" onClick={toggleStar.bind(toggleStar, note.name)}></span>
+										:
+										<span className="tag pointer icon-star has-text-grey" title="Star note" onClick={toggleStar.bind(toggleStar, note.name)}></span>
+									}
+
+									{
+										/*note.shared
+										?
+										<span className="tag pointer icon-cancel" title="Unshare" onClick={props.toggleShare.bind(props.toggleShare, note.name)}></span>
+										:
+										<span className="tag pointer icon-share" title="Share" onClick={props.toggleShare.bind(props.toggleShare, note.name)}></span>*/
+									}
+									{
+										note.trashed
+										?
+										<span>
+											<span className="tag pointer icon-cancel has-text-link" title="Restore" onClick={toggleTrash.bind(toggleTrash, note.name)}></span>
+											<span className="tag pointer icon-trash has-text-danger" title="Remove permanently" onClick={remove.bind(remove, note.name)}></span>
+										</span>
+										:
+										<span>
+											<span className="tag pointer icon-pencil" title="Edit" onClick={props.visible.bind(props.visible, "edit", note.name)}></span>
+											<span className="tag pointer icon-trash" title="Move to trash" onClick={toggleTrash.bind(toggleTrash, note.name)}></span>
+										</span>
+									}
+									
+								</div>
 							</div>
 						</div>
-					</div>
-				))
-			}
-			<style jsx>
-				{`
-					.column .box {
-						height: 170px;
-					}
-				`}
-			</style>
+					))
+					:
+					<div className="column has-text-centered mt-4 pt-4">No note to display</div>
+				}
+			</div>
 		</div>
 	)
 }
@@ -164,7 +322,7 @@ function ViewNote(props) {
 				<div className="column is-3">
 					<Button 
 						className="button is-light is-pulled-right is-size-5" 
-						onClick={props.visible.bind(props.visible, "list", "-1")}
+						onClick={props.visible.bind(props.visible, "list", {})}
 						text="X"
 					/>
 				</div>
@@ -213,9 +371,7 @@ function EditNote(props) {
 		setIsSaving(false);
 	}
 
-	function updateNoteContent(event, editor) {
-		let data = editor.getData();;
-		console.log(data);
+	function updateNoteContent(data) {
 		setNoteContent(data);
 	}
 
@@ -228,7 +384,7 @@ function EditNote(props) {
 				<div className="column is-3">
 					<Button 
 						className="button is-light is-pulled-right is-size-5" 
-						onClick={props.visible.bind(props.visible, "list", "-1")}
+						onClick={props.visible.bind(props.visible, "list", {})}
 						text="X"
 					/>
 				</div>
@@ -273,15 +429,13 @@ function NewNote(props) {
 		setIsSaving(false);
 	}
 
-	function updateNoteContent(value, arg2) {
-		console.log("arg1", value);
-		console.log("arg2", arg2);
-		// setNoteContent(value);
+	function updateNoteContent(data) {
+		setNoteContent(data);
 	}
 
 	function handleNameChange(e) {
 		let el = e.target;
-		let {value} = el;
+		let { value } = el;
 		// update note name
 		setName(value);
 	}
@@ -289,7 +443,7 @@ function NewNote(props) {
 	function verifyNoteName() {
 		if (!name) return;
 		// check duplicate name in notelistJSON
-		let newName = renameDuplicateFileName(name + ".txt", props.notes);
+		let newName = renameDuplicateFileName(name + ".txt", props.notelist);
 		setName(newName);
 		setDuplicateNoteName(false);
 	}
@@ -340,7 +494,22 @@ function NewNote(props) {
 	)
 }
 
-function buildNoteInfo(name) {
-	let date = new Date();
-	return {name, encrypt: true, shared: "", created: date, updated: date};
+
+function PreviewNote(props) {
+	let iframeRef = useRef(null);
+
+	useEffect(() => {
+		writeToIframe();
+	}, [])
+
+	let frameStyle = {width: "100%", height: "100vh", border: "none", overflow: "auto"};
+
+	function writeToIframe() {
+		let frame = iframeRef.current.contentWindow;
+		frame.document.body.innerHTML = props.content;
+	}
+
+	return (
+		<iframe ref={iframeRef} style={frameStyle}></iframe>
+	)
 }

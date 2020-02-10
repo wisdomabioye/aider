@@ -1,7 +1,7 @@
 {
   "name": "aider",
   "version": "1.0.0",
-  "description": "Decentralized Personal Assistant",
+  "description": "Manage your finances, files, schedules and notes more securely like a pro",
   "main": "index.js",
   "scripts": {
     "dev": "next -p 4000",
@@ -13,15 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^16.0.0",
-    "@ckeditor/ckeditor5-build-decoupled-document": "^16.0.0",
-    "@ckeditor/ckeditor5-react": "^2.1.0",
-    "@ckeditor/ckeditor5-upload": "^16.0.0",
     "@zeit/next-sass": "^1.0.1",
     "blockstack": "^19.3.0",
     "chart.js": "^2.9.3",
     "next": "^9.1.4",
-    "node-sass": "^4.13.0",
     "nprogress": "^0.2.0",
     "react": "^16.12.0",
     "react-chartjs-2": "^2.8.0",
@@ -29,6 +24,7 @@
     "react-quill": "^1.3.3"
   },
   "devDependencies": {
+    "node-sass": "^4.13.0",
     "bulma": "^0.8.0"
   }
 }

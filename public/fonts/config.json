@@ -259,6 +259,18 @@
       "src": "fontawesome"
     },
     {
+      "uid": "91426c82d94428a33353e495418435e3",
+      "css": "share",
+      "code": 59406,
+      "src": "entypo"
+    },
+    {
+      "uid": "474656633f79ea2f1dad59ff63f6bf07",
+      "css": "star",
+      "code": 59408,
+      "src": "fontawesome"
+    },
+    {
       "uid": "b8276b48e127bbfe23823b2f318a3936",
       "css": "bch",
       "code": 59392,

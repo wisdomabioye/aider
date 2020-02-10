@@ -1,7 +1,7 @@
 import {useState, useEffect, useRef} from "react";
 import Head from "next/head";
 
-import { signedIn, completeSignIn, currentUser, signOut, checkMigration, migrateLegacyFiles } from "../helpers/blockstack";
+import { signedIn, completeSignIn, currentUser, signOut } from "../helpers/blockstack";
 
 import { appInfo } from "../app.config";
 import Sidebar from "../components/Sidebar";
@@ -10,15 +10,12 @@ import SignInButton from "../components/SignInButton";
 import Footer from "../components/Footer";
 
 import ('../styles/nprogress.scss');
-import ('../styles/quill.core.scss');
+// import ('../styles/quill.core.scss');
 import ('../styles/quill.snow.scss');
 import ('../styles/main.scss');
 
 export default function Main(props) {
 	let [signInStatus, setSignInStatus] = useState(signedIn());
-	let [requireMigration, setRequireMigration] = useState(false);
-	let [migrating, setIsMigrating] = useState(false);
-
 	let overlayRef = useRef(null);
 	let sidebarRef = useRef(null);
 
@@ -35,27 +32,7 @@ export default function Main(props) {
 			})
 		}
 		setSignInStatus(signedIn());
-		findLegacyFiles();
-	}, [signInStatus, migrating])
-
-	async function findLegacyFiles() {
-		
-		if (signInStatus) {
-			let files = await checkMigration();
-			if (files) {
-				setRequireMigration(true);
-			}
-		}
-	}
-
-	async function migrateNow() {
-		setIsMigrating(true);
-
-		await migrateLegacyFiles();
-
-		setIsMigrating(false);
-		setRequireMigration(false);
-	}
+	}, [signInStatus])
 
 	function signOutAlert() {
 		signOut();
@@ -67,7 +44,7 @@ export default function Main(props) {
 		overlayRef.current.style.display = "none";
 	}
 	return (
-		<div className="container is-fullhd has-background-white">
+		<div className="container is-fullhd has-background-white is-marginless">
 			<Head>
 	          <title> {props.title ? props.title + " | " : ""}{ appInfo.description }</title>
 			</Head>
@@ -81,23 +58,10 @@ export default function Main(props) {
 					?
 					<div className="pl-2 pr-2">
 						<TopNav alert={signOutAlert} username={currentUser().username} title={props.title}/>
-						{
-							requireMigration &&
-							<div>
-								<strong>
-									Hi, due to platform upgrade to ensure efficiency, you are required to migrate to the latest version. It will only take few minutes. &nbsp;
-									<button className={"button is-dark is-small " + (migrating && "is-loading")} onClick={migrateNow}>
-										Migrate now
-									</button>
-								</strong>
-							</div>
-
-						}
-						
 						{props.children}
 					</div>
 					:
-					<OverlayContainer /> /*sign in container*/
+					<SignInButton/> /*sign in container*/
 				}
 				<Footer />
 			</div>

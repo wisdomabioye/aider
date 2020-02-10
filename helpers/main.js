@@ -216,3 +216,25 @@ export function truncateText(text, position) {
 	}
 	return text;
 }
+
+export function findByName(name, document) {
+	return document.find(doc => doc.name == name);
+}
+
+export function fileCategory() {
+	return [
+		{value: "all", name: "All (Trashed excl)"},
+		{value: "shared", name: "Shared"},
+		{value: "starred", name: "Starred"},
+		{value: "trashed", name: "Trashed"},
+	]
+}
+
+export function getFileInfo(file) {
+	return {name: file.name, size: file.size, type: file.type, date: new Date(), shared: "", encrypt: true, trashed: false, starred: false};
+}
+
+export function buildNoteInfo(name) {
+	let date = new Date();
+	return {name, encrypt: true, shared: "", starred: false, created: date, updated: date, trashed: false};
+}

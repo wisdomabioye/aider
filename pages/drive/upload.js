@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 import Main from "../../layouts/Main";
 import { Button } from "../../components/FormElements";
-import { getFileIcon, toArray,renameDuplicateFileName } from "../../helpers/main";
+import { getFileIcon, toArray,renameDuplicateFileName, getFileInfo } from "../../helpers/main";
 import { Storage, JSONFile} from "../../helpers/blockstack";
 
 /*
@@ -274,6 +274,3 @@ function readFileAsync(file) {
   })
 }
 
-function getFileInfo(file) {
-	return {name: file.name, size: file.size, type: file.type, date: new Date(), shared: "", encrypt: true};
-}
